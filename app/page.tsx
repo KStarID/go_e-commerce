@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/lib/cart-context"
+import { ShoppingCart } from "lucide-react"
+import Link from "next/link"
 
 interface Product {
   id: string
@@ -15,6 +18,7 @@ interface Product {
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const { addToCart, totalItems } = useCart()
 
   useEffect(() => {
     fetch("/api/products")
@@ -40,7 +44,19 @@ export default function Home() {
           >
             ShoesStore
           </motion.h1>
-          <Button>Login</Button>
+          <div className="flex items-center gap-4">
+            <Link href="/cart">
+              <Button variant="outline" className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </Button>
+            </Link>
+            <Button>Login</Button>
+          </div>
         </div>
       </header>
 
@@ -82,7 +98,9 @@ export default function Home() {
                     <span className="text-2xl font-bold text-slate-900">
                       Rp {product.price.toLocaleString("id-ID")}
                     </span>
-                    <Button>Beli</Button>
+                    <Button onClick={() => addToCart(product)}>
+                      Tambah ke Keranjang
+                    </Button>
                   </div>
                 </div>
               </motion.div>
