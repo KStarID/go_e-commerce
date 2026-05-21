@@ -34,7 +34,7 @@ func ProductsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	var products []Product
-	err = client.DB.From("products").Select("*").Execute(&products)
+	err = client.From("products").Select("*", "exact", false).Execute(&products)
 	
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
