@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { CheckCircle } from "lucide-react"
@@ -8,7 +8,7 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import confetti from "canvas-confetti"
 
-export default function OrderSuccessPage() {
+function OrderContent() {
   const searchParams = useSearchParams()
   const orderId = searchParams.get("id")
 
@@ -120,8 +120,21 @@ export default function OrderSuccessPage() {
               </Button>
             </Link>
           </div>
-        </motion.div>
-      </main>
-    </div>
+          </motion.div>
+        </main>
+      </div>
+    )
+  }
+}
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center">
+        <p className="text-slate-600">Loading...</p>
+      </div>
+    }>
+      <OrderContent />
+    </Suspense>
   )
 }
