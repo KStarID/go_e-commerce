@@ -4,7 +4,8 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/cart-context"
-import { ShoppingCart } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
+import { ShoppingCart, LogOut, User } from "lucide-react"
 import Link from "next/link"
 
 interface Product {
@@ -19,6 +20,7 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const { addToCart, totalItems } = useCart()
+  const { user, signOut } = useAuth()
 
   useEffect(() => {
     fetch("/api/products")
@@ -55,7 +57,22 @@ export default function Home() {
                 )}
               </Button>
             </Link>
-            <Button>Login</Button>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-sm">
+                  <User className="w-4 h-4" />
+                  <span className="font-medium">{user.email}</span>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => signOut()}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Keluar
+                </Button>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button>Login</Button>
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -88,11 +105,17 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 className="bg-white rounded-lg shadow-md overflow-hidden"
               >
-                <div className="h-48 bg-slate-200 flex items-center justify-center">
-                  <span className="text-slate-400">Product Image</span>
-                </div>
+                <Link href={`/product/${product.id}`}>
+                  <div className="h-48 bg-slate-200 flex items-center justify-center cursor-pointer">
+                    <span className="text-slate-400">Product Image</span>
+                  </div>
+                </Link>
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                  <Link href={`/product/${product.id}`}>
+                    <h3 className="text-xl font-semibold mb-2 hover:text-slate-600 cursor-pointer">
+                      {product.name}
+                    </h3>
+                  </Link>
                   <p className="text-slate-600 mb-4">{product.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-slate-900">
