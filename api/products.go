@@ -33,13 +33,21 @@ func ProductsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	var products []Product
-	err = client.From("products").Select("*", "exact", false).Execute(&products)
+	data, _, err := client.From("products").Select("*", "", false).Execute()
 	
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{
 			"error": "Failed to fetch products",
+		})
+		return
+	}
+
+	var products []Product
+	if err := json.Unmarshal(data, &products); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": "Failed to parse data",
 		})
 		return
 	}
