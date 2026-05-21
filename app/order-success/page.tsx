@@ -125,7 +125,6 @@ function OrderContent() {
       </div>
     )
   }
-}
 
 export default function OrderSuccessPage() {
   return (
