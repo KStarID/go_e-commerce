@@ -68,8 +68,8 @@ export default function OrderDetailPage() {
         setIsAdmin(admin)
 
         const query = supabase.from("orders").select("*").eq("id", params.id)
-        if (!admin) query.eq("user_id", user.id)
-        query.single().then(({ data: orderData, error }) => {
+        const finalQuery = admin ? query : query.eq("user_id", user.id)
+        finalQuery.single().then(({ data: orderData, error }) => {
           if (error || !orderData) {
             router.push(admin ? "/admin/orders" : "/orders")
             return
@@ -87,24 +87,6 @@ export default function OrderDetailPage() {
               setLoading(false)
             })
         })
-      })
-      .then(({ data: orderData, error }) => {
-        if (error || !orderData) {
-          router.push("/orders")
-          return
-        }
-        setOrder(orderData)
-
-        supabase
-          .from("order_items")
-          .select("*, products(name, image_url)")
-          .eq("order_id", orderData.id)
-          .then(({ data: itemsData }) => {
-            if (itemsData) {
-              setItems(itemsData)
-            }
-            setLoading(false)
-          })
       })
   }, [params.id, user, router])
 
