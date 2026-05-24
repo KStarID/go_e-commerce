@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/lib/cart-context"
 import { useAuth } from "@/lib/auth-context"
-import { ShoppingCart, LogOut, User } from "lucide-react"
+import { ShoppingCart, LogOut, User, Package } from "lucide-react"
 import Link from "next/link"
 
 interface Product {
@@ -59,13 +59,18 @@ export default function Home() {
             </Link>
             {user ? (
               <div className="flex items-center gap-3">
+                <Link href="/orders">
+                  <Button variant="ghost" size="sm">
+                    <Package className="w-4 h-4 mr-1" />
+                    Pesanan
+                  </Button>
+                </Link>
                 <div className="flex items-center gap-2 text-sm">
                   <User className="w-4 h-4" />
-                  <span className="font-medium">{user.email}</span>
+                  <span className="font-medium hidden sm:inline">{user.email}</span>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Keluar
+                  <LogOut className="w-4 h-4" />
                 </Button>
               </div>
             ) : (

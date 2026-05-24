@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, ShoppingBag } from "lucide-react"
+import { supabase } from "@/lib/supabase"
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart()
@@ -49,25 +50,41 @@ export default function CheckoutPage() {
     setError("")
 
     try {
-      const orderData = {
-        user_id: user.id,
-        total_amount: totalPrice,
-        status: "pending",
-        shipping_address: `${formData.address}, ${formData.city}, ${formData.postalCode}`,
-        customer_name: formData.fullName,
-        customer_phone: formData.phone,
-        notes: formData.notes,
-        items: items.map(item => ({
-          product_id: item.id,
-          quantity: item.quantity,
-          price: item.price,
-        })),
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          total_amount: totalPrice,
+          status: "pending",
+          shipping_address: `${formData.address}, ${formData.city}, ${formData.postalCode}`,
+          customer_name: formData.fullName,
+          customer_phone: formData.phone,
+          notes: formData.notes,
+        })
+        .select()
+        .single()
+
+      if (orderError || !order) {
+        throw new Error(orderError?.message || "Failed to create order")
       }
 
-      const orderId = Math.random().toString(36).substring(7)
-      
+      const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+      }))
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(orderItems)
+
+      if (itemsError) {
+        throw new Error(itemsError.message)
+      }
+
       clearCart()
-      router.push(`/order-success?id=${orderId}`)
+      router.push(`/order-success?id=${order.id}`)
     } catch (err) {
       setError("Gagal membuat pesanan. Silakan coba lagi.")
       setLoading(false)
