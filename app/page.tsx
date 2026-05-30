@@ -10,6 +10,7 @@ import Link from "next/link"
 import { useWishlist } from "@/lib/wishlist-context"
 import ProductImage from "@/components/product-image"
 import RecentlyViewedSection from "@/components/recently-viewed"
+import ThemeToggle from "@/components/theme-toggle"
 
 interface Product {
   id: string
@@ -68,6 +69,7 @@ export default function Home() {
             <Link href="/">ShoesStore</Link>
           </motion.h1>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Link href="/wishlist">
               <Button variant="ghost" className="relative text-white hover:bg-white/10">
                 <Heart className="w-5 h-5" />
@@ -111,7 +113,7 @@ export default function Home() {
           </div>
         ) : (
               <Link href="/login">
-                <Button variant="outline" size="sm" className="text-white border-slate-600 hover:bg-white/10">
+                <Button size="sm" className="bg-white text-slate-900 hover:bg-slate-100 border border-white rounded-xl font-semibold">
                   Masuk
                 </Button>
               </Link>

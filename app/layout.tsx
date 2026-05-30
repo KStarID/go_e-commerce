@@ -6,7 +6,6 @@ import { AuthProvider } from "@/lib/auth-context";
 import { WishlistProvider } from "@/lib/wishlist-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import Footer from "@/components/footer";
-import ThemeToggle from "@/components/theme-toggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +39,6 @@ export default function RootLayout({
               <CartProvider>
                 <div className="flex-1">{children}</div>
                 <Footer />
-                <ThemeToggle />
               </CartProvider>
             </WishlistProvider>
           </AuthProvider>
