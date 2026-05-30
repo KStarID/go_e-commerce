@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
-import { Package, ShoppingBag, Users, DollarSign, ArrowRight } from "lucide-react"
+import { Package, ShoppingBag, Users, DollarSign, ArrowRight, Ticket } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Link href="/admin/products">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -137,6 +137,18 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-bold mb-4">Kelola Pesanan</h2>
               <p className="text-slate-600 mb-4">Lihat dan update status pesanan</p>
               <Button variant="outline">Kelola Pesanan</Button>
+            </motion.div>
+          </Link>
+
+          <Link href="/admin/coupons">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+            >
+              <h2 className="text-xl font-bold mb-4">Kelola Kupon</h2>
+              <p className="text-slate-600 mb-4">Buat dan kelola kode diskon</p>
+              <Button variant="outline">Kelola Kupon</Button>
             </motion.div>
           </Link>
         </div>

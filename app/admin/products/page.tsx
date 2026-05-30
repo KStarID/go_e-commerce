@@ -5,9 +5,10 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
-import { Pencil, Trash2, Plus, Package } from "lucide-react"
+import { Pencil, Trash2, Plus, Package, Download } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { exportToCSV } from "@/lib/export"
 
 interface Product {
   id: string
@@ -71,11 +72,16 @@ export default function AdminProducts() {
           >
             Produk
           </motion.h1>
-          <Link href="/admin/products/new">
-            <Button>
-              <Plus className="w-4 h-4 mr-2" /> Tambah Produk
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => exportToCSV(products, "products")}>
+              <Download className="w-4 h-4 mr-1" /> Export CSV
             </Button>
-          </Link>
+            <Link href="/admin/products/new">
+              <Button>
+                <Plus className="w-4 h-4 mr-2" /> Tambah Produk
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {products.length === 0 ? (
@@ -107,6 +113,11 @@ export default function AdminProducts() {
                     <td className="p-4 text-right">{p.stock}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <Link href={`/admin/products/${p.id}/variants`}>
+                          <Button variant="outline" size="sm" className="text-xs">
+                            Varian
+                          </Button>
+                        </Link>
                         <Link href={`/admin/products/${p.id}`}>
                           <Button variant="outline" size="sm">
                             <Pencil className="w-4 h-4" />

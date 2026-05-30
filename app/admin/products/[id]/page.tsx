@@ -5,9 +5,10 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Upload } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useParams } from "next/navigation"
+import { uploadProductImage } from "@/lib/upload"
 
 export default function EditProduct() {
   const { user } = useAuth()
@@ -16,6 +17,8 @@ export default function EditProduct() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState("")
   const [form, setForm] = useState({
     name: "", description: "", price: "", stock: "", category: "", image_url: "",
   })
@@ -47,13 +50,19 @@ export default function EditProduct() {
     e.preventDefault()
     setLoading(true)
 
+    let imageUrl = form.image_url
+    if (uploadFile) {
+      const url = await uploadProductImage(uploadFile)
+      if (url) imageUrl = url
+    }
+
     const { error } = await supabase.from("products").update({
       name: form.name,
       description: form.description,
       price: parseFloat(form.price),
       stock: parseInt(form.stock),
       category: form.category,
-      image_url: form.image_url || null,
+      image_url: imageUrl || null,
     }).eq("id", params.id)
 
     if (!error) {
@@ -66,6 +75,15 @@ export default function EditProduct() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setUploadFile(file)
+      setPreview(URL.createObjectURL(file))
+      setForm({ ...form, image_url: "" })
+    }
   }
 
   if (!isAdmin || fetching) return null
@@ -128,10 +146,28 @@ export default function EditProduct() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">URL Gambar</label>
-              <input type="url" name="image_url" value={form.image_url} onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none" />
+              <label className="block text-sm font-medium text-slate-700 mb-2">Gambar Produk</label>
+              <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-slate-400 transition-colors cursor-pointer">
+                {preview || form.image_url ? (
+                  <div className="relative">
+                    <img src={preview || form.image_url} alt="Preview" className="h-40 mx-auto rounded-lg object-cover" />
+                    <button type="button" onClick={() => { setUploadFile(null); setPreview(""); setForm({...form, image_url: ""}) }}
+                      className="text-sm text-red-500 mt-2 underline">Hapus</button>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer">
+                    <Upload className="w-8 h-8 mx-auto text-slate-400 mb-2" />
+                    <p className="text-sm text-slate-500">Klik untuk upload gambar</p>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                  </label>
+                )}
+              </div>
+              <div className="mt-3">
+                <label className="block text-sm text-slate-500 mb-1">Atau masukkan URL gambar</label>
+                <input type="url" name="image_url" value={form.image_url} onChange={handleChange}
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-900 focus:outline-none" />
+              </div>
             </div>
 
             <div className="flex gap-4 pt-4">

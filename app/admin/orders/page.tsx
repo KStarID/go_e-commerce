@@ -5,9 +5,10 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
-import { ShoppingBag, Eye } from "lucide-react"
+import { ShoppingBag, Eye, Download } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { exportToCSV } from "@/lib/export"
 
 interface Order {
   id: string
@@ -90,7 +91,12 @@ export default function AdminOrders() {
             <p className="text-slate-600">
               Total {orders.length} pesanan · Rp {totalRevenue.toLocaleString("id-ID")}
             </p>
-          </motion.div>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={() => exportToCSV(orders, "orders")}>
+              <Download className="w-4 h-4 mr-1" /> Export CSV
+            </Button>
+          </div>
+        </motion.div>
         </div>
 
         {orders.length === 0 ? (

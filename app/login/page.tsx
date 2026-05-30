@@ -17,83 +17,47 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
-    setLoading(true)
-
+    setError(""); setLoading(true)
     const { error } = await signIn(email, password)
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-    } else {
-      router.push("/")
-    }
+    if (error) { setError(error.message); setLoading(false) }
+    else router.push("/")
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/5 to-transparent pointer-events-none" />
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md relative">
+        <div className="bg-white rounded-2xl shadow-sm p-8">
           <div className="text-center mb-8">
-            <Link href="/">
-              <h1 className="text-3xl font-bold mb-2">ShoesStore</h1>
-            </Link>
-            <p className="text-slate-600">Masuk ke akun Anda</p>
+            <Link href="/"><h1 className="text-3xl font-bold mb-2">ShoesStore</h1></Link>
+            <p className="text-slate-500">Masuk ke akun Anda</p>
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-6 text-sm">
-              {error}
-            </div>
+            <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-sm">{error}</div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
-                placeholder="nama@email.com"
-              />
+              <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                placeholder="nama@email.com" />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
-                placeholder="••••••••"
-              />
+              <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
+                placeholder="••••••••" />
             </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full rounded-xl" disabled={loading}>
               {loading ? "Memproses..." : "Masuk"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-slate-600">
+          <div className="mt-6 text-center text-sm text-slate-500">
             Belum punya akun?{" "}
-            <Link href="/register" className="text-slate-900 font-semibold hover:underline">
-              Daftar sekarang
-            </Link>
+            <Link href="/register" className="text-slate-900 font-semibold hover:underline">Daftar sekarang</Link>
           </div>
         </div>
       </motion.div>
